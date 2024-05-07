@@ -12,16 +12,7 @@ public class ViagemService {
     public static List<Viagem> viagens = new ArrayList<Viagem>();
 
     public ViagemService(){
-        fakeTrip();
-    }
 
-    private void fakeTrip(){
-        Viagem viagem1 = new Viagem();
-        viagem1.setSource("Brazil");
-        viagem1.setDestination("USA");
-        //viagem1.setType(RETURN);
-        viagem1.setId(1L);
-        viagens.add(viagem1);
     }
 
     public Viagem getViagemById(Long id){
@@ -52,7 +43,7 @@ public class ViagemService {
         trip.setType(viagem.getType());
 
         viagens.add(trip);
-        
+
         return trip;
     }
 

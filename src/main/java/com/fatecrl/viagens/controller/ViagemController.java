@@ -3,6 +3,7 @@ package com.fatecrl.viagens.controller;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,11 +54,13 @@ public class ViagemController {
                 viagem.getStartDateTime() == null ||
                 viagem.getEndDateTime() == null ||
                 viagem.getType() == null) {
-            // Return an error response indicating that required fields are missing
+
+            // status 400
             return ResponseEntity.badRequest().build();
         }
 
         // inconsistencias
+
         if (viagem.getStartDateTime().isAfter(viagem.getEndDateTime())) {
 
             // status 422
@@ -81,7 +84,7 @@ public class ViagemController {
                 .toUri();
 
         // status 201
-        return ResponseEntity.created(location).build();
+       return ResponseEntity.status(HttpStatus.CREATED).header("Location", location.toString()).body(trip);
     }
 
 }
