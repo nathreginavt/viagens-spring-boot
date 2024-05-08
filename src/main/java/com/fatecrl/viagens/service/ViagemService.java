@@ -47,11 +47,10 @@ public class ViagemService {
         return trip;
     }
 
-    public Viagem putViagemById(Viagem viagem){
-        Viagem viagem = new Viagem();
+    public Viagem putViagem(Viagem viagem){
 
         for(Viagem trip : viagens){
-            if(trip.getId().equals(idViagem))
+            if(trip.getId().equals(viagem.getId()))
             {
                 trip.setId(viagem.generateNextId());
                 trip.setOrderNumber(viagem.getOrderNumber());
@@ -62,14 +61,11 @@ public class ViagemService {
                 trip.setEndDateTime(viagem.getEndDateTime());
                 trip.setType(viagem.getType());
 
-                viagem = trip;
-                break;
+                return trip;
             }
         }
 
-        if(viagem.getId() == null) return null;
-
-            return trip;
+        return null;
     }
 
 }
