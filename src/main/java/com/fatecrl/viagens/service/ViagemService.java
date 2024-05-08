@@ -47,4 +47,29 @@ public class ViagemService {
         return trip;
     }
 
+    public Viagem putViagemById(Viagem viagem){
+        Viagem viagem = new Viagem();
+
+        for(Viagem trip : viagens){
+            if(trip.getId().equals(idViagem))
+            {
+                trip.setId(viagem.generateNextId());
+                trip.setOrderNumber(viagem.getOrderNumber());
+                trip.setAmount(viagem.getAmount());
+                trip.setSource(viagem.getSource());
+                trip.setDestination(viagem.getDestination());
+                trip.setStartDateTime(viagem.getStartDateTime());
+                trip.setEndDateTime(viagem.getEndDateTime());
+                trip.setType(viagem.getType());
+
+                viagem = trip;
+                break;
+            }
+        }
+
+        if(viagem.getId() == null) return null;
+
+            return trip;
+    }
+
 }
