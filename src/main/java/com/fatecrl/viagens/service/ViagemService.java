@@ -52,7 +52,6 @@ public class ViagemService {
         for(Viagem trip : viagens){
             if(trip.getId().equals(viagem.getId()))
             {
-                trip.setId(viagem.generateNextId());
                 trip.setOrderNumber(viagem.getOrderNumber());
                 trip.setAmount(viagem.getAmount());
                 trip.setSource(viagem.getSource());

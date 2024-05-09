@@ -1,6 +1,8 @@
 package com.fatecrl.viagens.controller;
 
 import java.net.URI;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +47,7 @@ public class ViagemController {
 
     @PostMapping("/")
     public ResponseEntity<Viagem> postViagem(
-        @RequestBody Viagem viagem) {
+            @RequestBody Viagem viagem) {
 
         // request invalido
         if (haParametroNulo(viagem)) {
@@ -53,14 +55,17 @@ public class ViagemController {
             return ResponseEntity.badRequest().build();
         }
 
+        
         // inconsistencias
+        //if (haInconsistencias(viagem) || !saoParseaveis(viagem))
         if (haInconsistencias(viagem)) {
             // status 422
             return ResponseEntity.unprocessableEntity().build();
         }
+        
 
         Viagem trip = _viagemService
-        .postViagem(viagem);
+                .postViagem(viagem);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -69,57 +74,74 @@ public class ViagemController {
                 .toUri();
 
         // status 201
-       return ResponseEntity.status(HttpStatus.CREATED).header("Location", location.toString()).body(trip);
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", location.toString()).body(trip);
     }
 
     @PutMapping("/")
-    public ResponseEntity<Viagem> putViagem(@RequestBody Viagem viagem){
+    public ResponseEntity<Viagem> putViagem(@RequestBody Viagem viagem) {
 
         // request invalido
         if (haParametroNulo(viagem)) {
             // status 400
             return ResponseEntity.badRequest().build();
         }
-        
-            //mudar o nome, tirar esse BY ID 
-        Viagem trip = _viagemService.putViagemById(viagem);
+
+        //campo nao parseavel
+        // if (!saoParseaveis(viagem)) {
+        //     // status 422 
+        //     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        // }
+
+        Viagem trip = _viagemService.putViagem(viagem);
 
         if (trip == null) {
             // status 404
             return ResponseEntity.notFound().build();
         }
-        
+
         // status 200
-       return ResponseEntity.ok.body(trip);
+        return ResponseEntity.ok().body(trip);
     }
-}
 
-Boolean haParametroNulo(Viagem viagem){
-    if(viagem.getOrderNumber() == null ||
-            viagem.getAmount() == null ||
-            viagem.getSource() == null ||
-            viagem.getDestination() == null ||
-            viagem.getStartDateTime() == null ||
-            viagem.getEndDateTime() == null ||
-            viagem.getType() == null){
+    private boolean haParametroNulo(Viagem viagem) {
+        if (viagem.getOrderNumber() == null ||
+                viagem.getAmount() == null ||
+                viagem.getSource() == null ||
+                viagem.getDestination() == null ||
+                viagem.getStartDateTime() == null ||
+                viagem.getEndDateTime() == null ||
+                viagem.getType() == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean haInconsistencias(Viagem viagem) {
+        // inconsistencias
+        if (viagem.getStartDateTime().isAfter(viagem.getEndDateTime())) {
+            return true;
+        }
+
+        String source = viagem.getSource();
+        String destination = viagem.getDestination();
+        if (source.equalsIgnoreCase(destination)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /* 
+    private boolean saoParseaveis(Viagem viagem){
+        try{
+            LocalDateTime.parse(viagem.getStartDateTime());
+            LocalDateTime.parse(viagem.getEndDateTime());
+        } catch(DateTimeException e){
+            return false;
+        }
+
         return true;
-    } else{
-        return false
     }
+    */
 }
-
-Boolean haInconsistencias(Viagem viagem){
-    // inconsistencias
-    if (viagem.getStartDateTime().isAfter(viagem.getEndDateTime())) {
-        return true;
-    }
-
-     String source = viagem.getSource();
-     String destination = viagem.getDestination();
-     if(source.equalsIgnoreCase(destination)){
-        return true;
-    }
-
-    return false;
-}
-    
