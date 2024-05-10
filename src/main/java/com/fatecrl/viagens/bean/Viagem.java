@@ -1,17 +1,36 @@
 package com.fatecrl.viagens.bean;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Viagem {
-    private Long id;
-    private String orderNumber;
-    private String amount;
-    private String source;
-    private String destination;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
-    private Type type;
+@Entity
+@Table(name = "tb_viagem")
+public class Viagem implements Serializable {
     private static Long nextId = 1L;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "cd_orderNumber", nullable = false)
+    private String orderNumber;
+    @Column(name = "vl_amount", nullable = false)
+    private String amount;
+    @Column(name = "nm_source", nullable = false)
+    private String source;
+    @Column(name = "nm_destination", nullable = false)
+    private String destination;
+    @Column(name = "cd_startDateTime", nullable = false, length = 20)
+    private LocalDateTime startDateTime;
+    @Column(name = "cd_endDateTime", nullable = false, length = 20)
+    private LocalDateTime endDateTime;
+    @Column(name = "nm_Type", nullable = false)
+    private Type type;
 
     public Long getId() {
         return id;
