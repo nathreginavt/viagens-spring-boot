@@ -1,14 +1,13 @@
 package com.fatecrl.viagens.controller;
 
 import java.net.URI;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -32,7 +32,7 @@ public class ViagemController implements IController<Viagem> {
     private ViagemService _viagemService;
 
     @Override
-    @GetMapping("/{id}")
+    @GetMapping("/")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200"
                     , description = "Resultado com sucesso"
@@ -47,6 +47,8 @@ public class ViagemController implements IController<Viagem> {
 	}
 
     //retorna pesquisa por id
+    @Override
+    @GetMapping("/{id}")
     public ResponseEntity<Viagem> get(@PathVariable ("id") Long id) {
         Viagem trip = _viagemService.findById(id);
         if( trip != null){
@@ -58,27 +60,47 @@ public class ViagemController implements IController<Viagem> {
 
     
     @Override
-    public ResponseEntity<Viagem> post(Viagem obj) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'post'");
+    @PostMapping("/")
+    //cria uma viagem
+    public ResponseEntity<Viagem> post(Viagem trip) {
+        _viagemService.create(trip);
+
+        URI location = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(trip.getId())
+                        .toUri();
+        return ResponseEntity.created(location).body(trip);
     }
 
     @Override
-    public ResponseEntity<?> put(Viagem obj) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'put'");
+    @PutMapping("/")
+    //atualiza uma viagem
+    public ResponseEntity<Viagem> put(@RequestBody Viagem trip) {
+        if(_viagemService.update(trip)){
+            return ResponseEntity.ok(trip);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<?> patch(Viagem obj) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'patch'");
+    @PatchMapping("/")
+    //atualiza uma viagem
+    public ResponseEntity<Viagem> patch(@RequestBody Viagem trip) {
+        if(_viagemService.update(trip)){
+            return ResponseEntity.ok(trip);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    @DeleteMapping(value = "/{id}")
+    //exclui uma conta
+    public ResponseEntity<Viagem> delete(@PathVariable("id") Long id) {
+        if(_viagemService.delete(id)){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /*
