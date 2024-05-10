@@ -3,6 +3,7 @@ package com.fatecrl.viagens.controller;
 import java.net.URI;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,37 +16,73 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fatecrl.viagens.bean.Viagem;
 import com.fatecrl.viagens.service.ViagemService;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/viagens")
-
-public class ViagemController {
+public class ViagemController implements IController<Viagem> {
 
     @Autowired
     private ViagemService _viagemService;
 
+    @Override
     @GetMapping("/{id}")
-    public ResponseEntity<Viagem> getViagemById(@PathVariable Long id) {
-        if (id == null) {
-            // status 400
-            return ResponseEntity.badRequest().build();
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200"
+                    , description = "Resultado com sucesso"
+        ),
+        @ApiResponse(responseCode = "500"
+                    , description = "Erro interno do servidor"
+        )
+    })
+    //retorna todos
+    public ResponseEntity<List<Viagem>> getAll(){
+		return ResponseEntity.ok(_viagemService.findAll());
+	}
+
+    //retorna pesquisa por id
+    public ResponseEntity<Viagem> get(@PathVariable ("id") Long id) {
+        Viagem trip = _viagemService.findById(id);
+        if( trip != null){
+            //status 200
+            return ResponseEntity.ok(trip);
         }
-
-        Viagem trip = _viagemService.getViagemById(id);
-
-        if (trip == null) {
-            // status 404
-            return ResponseEntity.notFound().build();
-        }
-
-        // status 200
-        return ResponseEntity.ok(trip);
+        return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/")
+    
+    @Override
+    public ResponseEntity<Viagem> post(Viagem obj) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'post'");
+    }
+
+    @Override
+    public ResponseEntity<?> put(Viagem obj) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'put'");
+    }
+
+    @Override
+    public ResponseEntity<?> patch(Viagem obj) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'patch'");
+    }
+
+    @Override
+    public ResponseEntity<?> delete(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
+    /*
+     * @PostMapping("/")
     public ResponseEntity<Viagem> postViagem(
             @RequestBody Viagem viagem) {
 
@@ -131,17 +168,6 @@ public class ViagemController {
 
         return false;
     }
+     */
 
-    /* 
-    private boolean saoParseaveis(Viagem viagem){
-        try{
-            LocalDateTime.parse(viagem.getStartDateTime());
-            LocalDateTime.parse(viagem.getEndDateTime());
-        } catch(DateTimeException e){
-            return false;
-        }
-
-        return true;
-    }
-    */
 }

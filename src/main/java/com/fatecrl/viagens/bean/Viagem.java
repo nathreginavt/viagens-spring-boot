@@ -32,6 +32,10 @@ public class Viagem implements Serializable {
     @Column(name = "nm_Type", nullable = false)
     private Type type;
 
+    public Viagem(){
+
+    }
+    
     public Long getId() {
         return id;
     }
