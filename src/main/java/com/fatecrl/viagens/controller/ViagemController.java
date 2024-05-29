@@ -19,6 +19,7 @@ import com.fatecrl.viagens.service.ViagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -78,15 +79,26 @@ public class ViagemController implements IController<Viagem> {
         @ApiResponse(responseCode = "500"
                     , description = "Erro no servidor"),
     })
-    public ResponseEntity<Viagem> post(Viagem trip) {
-        _viagemService.create(trip);
+    public ResponseEntity<Viagem> post(@Valid @RequestBody Viagem trip) {
+
+        //how to return http 400 if there's any missing field???
+
+        if(
+            trip.getEndDateTime().isBefore(trip.getStartDateTime()) ||
+            trip.getDestination().equals(trip.getSource())
+            )
+        {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+
+        Viagem newTrip = _viagemService.create(trip);
 
         URI location = ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(trip.getId())
+                        .buildAndExpand(newTrip.getId())
                         .toUri();
-        return ResponseEntity.created(location).body(trip);
+        return ResponseEntity.created(location).body(newTrip);
     }
 
     @Override
@@ -102,7 +114,15 @@ public class ViagemController implements IController<Viagem> {
         @ApiResponse(responseCode = "422"
                     , description = "Request mal formatado"),
     })
-    public ResponseEntity<Viagem> put(@RequestBody Viagem trip) {
+    public ResponseEntity<Viagem> put(@Valid @RequestBody Viagem trip) {
+        if(
+            trip.getEndDateTime().isBefore(trip.getStartDateTime()) ||
+            trip.getDestination().equals(trip.getSource())
+            )
+        {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+
         if(_viagemService.update(trip)){
             return ResponseEntity.ok(trip);
         }

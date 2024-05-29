@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,23 +15,41 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_viagem")
 public class Viagem implements Serializable {
+
     private static Long nextId = 1L;
+
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "cd_orderNumber", nullable = false)
+    @NotNull(message = "Order number is required")
     private String orderNumber;
+
     @Column(name = "vl_amount", nullable = false)
+    @NotNull(message = "Amount is required")
     private String amount;
+    
     @Column(name = "nm_source", nullable = false)
+    @NotNull(message = "Source is required")
     private String source;
+
     @Column(name = "nm_destination", nullable = false)
+    @NotNull(message = "Destination is required")
     private String destination;
+
     @Column(name = "cd_startDateTime", nullable = false, length = 20)
+    @NotNull(message = "Start date and time is required")
+    @FutureOrPresent(message = "The start date and time must be in the present or future")
     private LocalDateTime startDateTime;
+
     @Column(name = "cd_endDateTime", nullable = false, length = 20)
+    @NotNull(message = "End date and time is required")
+    @FutureOrPresent(message = "The end date and time must be in the present or future")
     private LocalDateTime endDateTime;
+    
     @Column(name = "nm_Type", nullable = false)
+    @NotNull(message = "Type is required")
     private Type type;
 
     public Viagem(){
