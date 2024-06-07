@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import com.fatecrl.viagens.service.ViagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/viagens")
+@Tag(name="Viagem", description = "Gerenciar viagem")
 public class ViagemController implements IController<Viagem> {
 
     @Autowired
@@ -34,13 +38,11 @@ public class ViagemController implements IController<Viagem> {
 
     @Override
     @GetMapping("/")
-    @Operation(summary = "Retorna a lista de viagens")
+    @Operation(summary = "Retorna a lista de viagens", description = "Ontem a lista de viagens com todos os seus dados")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200"
                     , description = "Retorna todas as viagens cadastradas"
         ),
-        // @ApiResponse(responseCode = "404"
-        //             , description = ""),
         @ApiResponse(responseCode = "500"
                     , description = "Erro interno do servidor"
         )
@@ -49,9 +51,16 @@ public class ViagemController implements IController<Viagem> {
 		return ResponseEntity.ok(_viagemService.findAll());
 	}
 
+    @Operation(summary = "Retorna a lista de viagens, de forma paginada",
+               description = "Obtem a lista de viagens com todos os seus dados, de forma paginada")
+    @GetMapping(value="/page")
+    public ResponseEntity<Page<Viagem>> getAll(Pageable pageable){
+        return ResponseEntity.ok(_viagemService.findAll(pageable));
+    }
+
     @Override
-    @GetMapping("/{id}")
-    @Operation(summary = "Retorna a viagem indicada")
+    @GetMapping(value="/{id}", produces="application/json")
+    @Operation(summary = "Retorna uma viagem", description = "Retorna a viagem com o id correspondente ao indicado")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
             description = "Retorna a viagem indicada"),
@@ -68,7 +77,7 @@ public class ViagemController implements IController<Viagem> {
     
     @Override
     @PostMapping("/")
-    @Operation(summary = "Cria uma nova viagem")
+    @Operation(summary = "Cria uma viagem", description = "Cria uma nova viagem com as informações informadas no body")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201"
                     , description = "Cria uma nova viagem"),

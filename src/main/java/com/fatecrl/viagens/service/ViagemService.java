@@ -1,10 +1,11 @@
 package com.fatecrl.viagens.service;
 
-//import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fatecrl.viagens.bean.Viagem;
@@ -12,7 +13,6 @@ import com.fatecrl.viagens.repository.ViagemRepository;
 
 @Service
 public class ViagemService implements IService<Viagem>{
-    //public static List<Viagem> viagens = new ArrayList<Viagem>();
 
     @Autowired
     private ViagemRepository repository;
@@ -32,8 +32,12 @@ public class ViagemService implements IService<Viagem>{
     }
 
     @Override
-    public List<Viagem> findAll() {
+    public List<Viagem> findAll(){
         return repository.findAll();
+    }
+
+    public Page<Viagem> findAll(Pageable pageable){
+        return repository.findAll(pageable);
     }
 
     @Override
@@ -53,57 +57,4 @@ public class ViagemService implements IService<Viagem>{
         }
         return false;
     }
-
-    /*
-    public Viagem getViagemById(Long id){
-        for (Viagem viagem : viagens){
-            if(viagem.getId().equals(id)){
-                return viagem;
-            }
-        }
-        return null;
-    }
-
-    public List<Viagem> getViagens(){
-        List<Viagem> tripsList = new ArrayList<Viagem>(viagens);
-        return tripsList;
-    }
-
-    public Viagem postViagem(Viagem viagem){
-        Viagem trip = new Viagem();
-
-        trip.setId(viagem.generateNextId());
-        trip.setOrderNumber(viagem.getOrderNumber());
-        trip.setAmount(viagem.getAmount());
-        trip.setSource(viagem.getSource());
-        trip.setDestination(viagem.getDestination());
-        trip.setStartDateTime(viagem.getStartDateTime());
-        trip.setEndDateTime(viagem.getEndDateTime());
-        trip.setType(viagem.getType());
-
-        viagens.add(trip);
-
-        return trip;
-    }
-
-    public Viagem putViagem(Viagem viagem){
-
-        for(Viagem trip : viagens){
-            if(trip.getId().equals(viagem.getId()))
-            {
-                trip.setOrderNumber(viagem.getOrderNumber());
-                trip.setAmount(viagem.getAmount());
-                trip.setSource(viagem.getSource());
-                trip.setDestination(viagem.getDestination());
-                trip.setStartDateTime(viagem.getStartDateTime());
-                trip.setEndDateTime(viagem.getEndDateTime());
-                trip.setType(viagem.getType());
-
-                return trip;
-            }
-        }
-
-        return null;
-    } */
-
 }

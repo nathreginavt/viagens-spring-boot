@@ -1,6 +1,7 @@
 package com.fatecrl.viagens.controller;
 
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 public interface IController<T> {
