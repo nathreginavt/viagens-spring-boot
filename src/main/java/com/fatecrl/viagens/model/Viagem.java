@@ -1,4 +1,4 @@
-package com.fatecrl.viagens.bean;
+package com.fatecrl.viagens.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fatecrl.viagens.bean.Viagem;
+import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.service.ViagemService;
 
 import io.swagger.v3.oas.annotations.Operation;
