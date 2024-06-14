@@ -1,19 +1,22 @@
 package com.fatecrl.viagens.bean;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+
+
 @Entity
 @Table(name = "tb_viagem")
+
+@NamedQueries({
+    @NamedQuery(name = "Viagem.findByNmType", 
+    query = "SELECT v FROM Viagem v WHERE v.type = Type.MULTI")
+})
+
 public class Viagem implements Serializable {
 
     private static Long nextId = 1L;
