@@ -40,6 +40,14 @@ public class ViagemService implements IService<Viagem>{
         return repository.findAll(pageable);
     }
 
+    //queries
+    public List<Viagem> findByDestination(String destination) {
+        return repository.findByDestination(destination);
+    }
+    public List<Viagem> findBySource(String source) {
+        return repository.findBySource(source);
+    }
+
     @Override
     public boolean update(Viagem trip) {
         if(repository.existsById(trip.getId())){

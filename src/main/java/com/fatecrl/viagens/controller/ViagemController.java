@@ -37,8 +37,41 @@ public class ViagemController implements IController<Viagem> {
     private ViagemService _viagemService;
 
     @Override
+    @PostMapping("/")
+    @Operation(summary = "Cria uma viagem", description = "Cria uma nova viagem com as informações informadas no body")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201"
+                    , description = "Cria uma nova viagem"),
+        @ApiResponse(responseCode = "400"
+                    , description = "Request inválido"),
+        @ApiResponse(responseCode = "422"
+                    , description = "Request mal formatado"),
+        @ApiResponse(responseCode = "500"
+                    , description = "Erro no servidor"),
+    })
+    public ResponseEntity<Viagem> post(@Valid @RequestBody Viagem trip) {
+
+        if(
+            trip.getEndDateTime().isBefore(trip.getStartDateTime()) ||
+            trip.getDestination().equals(trip.getSource())
+            )
+        {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+
+        Viagem newTrip = _viagemService.create(trip);
+
+        URI location = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(newTrip.getId())
+                        .toUri();
+        return ResponseEntity.created(location).body(newTrip);
+    }
+
+    @Override
     @GetMapping("/")
-    @Operation(summary = "Retorna a lista de viagens", description = "Ontem a lista de viagens com todos os seus dados")
+    @Operation(summary = "Retorna a lista de viagens", description = "Ontem a lista completa de viagens com todos os seus dados")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200"
                     , description = "Retorna todas as viagens cadastradas"
@@ -53,6 +86,12 @@ public class ViagemController implements IController<Viagem> {
 
     @Operation(summary = "Retorna a lista de viagens, de forma paginada",
                description = "Obtem a lista de viagens com todos os seus dados, de forma paginada")
+    @ApiResponses(value = {
+                @ApiResponse(responseCode = "200",
+                    description = "Retorna lista de viagens, de forma paginada"),
+                @ApiResponse(responseCode = "404",
+                    description = "Viagens não encontradas"),
+            })
     @GetMapping(value="/page")
     public ResponseEntity<Page<Viagem>> getAll(Pageable pageable){
         return ResponseEntity.ok(_viagemService.findAll(pageable));
@@ -74,40 +113,37 @@ public class ViagemController implements IController<Viagem> {
         }
         return ResponseEntity.notFound().build();
     }
-    
-    @Override
-    @PostMapping("/")
-    @Operation(summary = "Cria uma viagem", description = "Cria uma nova viagem com as informações informadas no body")
+
+    @GetMapping(value="/origem/{source}", produces="application/json")
+    @Operation(summary = "Retorna lista de viagens", description = "Retorna as viagens com a origem correspondente ao indicado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201"
-                    , description = "Cria uma nova viagem"),
-        @ApiResponse(responseCode = "400"
-                    , description = "Request inválido"),
-        @ApiResponse(responseCode = "422"
-                    , description = "Request mal formatado"),
-        @ApiResponse(responseCode = "500"
-                    , description = "Erro no servidor"),
+        @ApiResponse(responseCode = "200",
+            description = "Retorna as viagens com origem indicada"),
+        @ApiResponse(responseCode = "404",
+            description = "Viagens não encontradas"),
     })
-    public ResponseEntity<Viagem> post(@Valid @RequestBody Viagem trip) {
-
-        //how to return http 400 if there's any missing field???
-
-        if(
-            trip.getEndDateTime().isBefore(trip.getStartDateTime()) ||
-            trip.getDestination().equals(trip.getSource())
-            )
-        {
-            return ResponseEntity.unprocessableEntity().build();
+    public ResponseEntity<List<Viagem>> getBySource(@PathVariable ("source") String source) {
+        List<Viagem> trips = _viagemService.findBySource(source);
+        if(trips != null && !trips.isEmpty()){
+            return ResponseEntity.ok(trips);
         }
+        return ResponseEntity.notFound().build();
+    }
 
-        Viagem newTrip = _viagemService.create(trip);
-
-        URI location = ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(newTrip.getId())
-                        .toUri();
-        return ResponseEntity.created(location).body(newTrip);
+    @GetMapping(value="/destino/{destination}", produces="application/json")
+    @Operation(summary = "Retorna lista de viagens", description = "Retorna as viagens com o destino correspondente ao indicado")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200",
+            description = "Retorna as viagens com destino indicado"),
+        @ApiResponse(responseCode = "404",
+            description = "Viagens não encontradas"),
+    })
+    public ResponseEntity<List<Viagem>> getByDestination(@PathVariable ("destination") String destination) {
+        List<Viagem> trips = _viagemService.findByDestination(destination);
+        if(trips != null && !trips.isEmpty()){
+            return ResponseEntity.ok(trips);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Override
@@ -122,6 +158,8 @@ public class ViagemController implements IController<Viagem> {
                     , description = "Viagem não encontrada"),
         @ApiResponse(responseCode = "422"
                     , description = "Request mal formatado"),
+        @ApiResponse(responseCode = "500"
+                    , description = "Erro no servidor"),
     })
     public ResponseEntity<Viagem> put(@Valid @RequestBody Viagem trip) {
         if(
