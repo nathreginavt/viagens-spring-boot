@@ -12,11 +12,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_viagem")
 
-@NamedQueries({
-    @NamedQuery(name = "Viagem.findByNmType", 
-    query = "SELECT v FROM Viagem v WHERE v.type = Type.MULTI")
-})
-
 @Getter
 @Setter
 

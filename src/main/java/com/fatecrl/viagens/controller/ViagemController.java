@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fatecrl.viagens.dto.ViagemDTO;
 import com.fatecrl.viagens.mapper.ViagemMapper;
+import com.fatecrl.viagens.model.Type;
 import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.service.ViagemService;
 
@@ -122,7 +123,7 @@ public class ViagemController implements IController<Viagem> {
     }
 
     @GetMapping(value="/origem/{source}", produces="application/json")
-    @Operation(summary = "Retorna lista de viagens", description = "Retorna as viagens com a origem correspondente ao indicado")
+    @Operation(summary = "Retorna lista de viagens com mesma origem", description = "Retorna as viagens com a origem correspondente ao indicado")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
             description = "Retorna as viagens com origem indicada"),
@@ -138,7 +139,7 @@ public class ViagemController implements IController<Viagem> {
     }
 
     @GetMapping(value="/destino/{destination}", produces="application/json")
-    @Operation(summary = "Retorna lista de viagens", description = "Retorna as viagens com o destino correspondente ao indicado")
+    @Operation(summary = "Retorna lista de viagens com mesmo destino", description = "Retorna as viagens com o destino correspondente ao indicado")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
             description = "Retorna as viagens com destino indicado"),
@@ -152,6 +153,24 @@ public class ViagemController implements IController<Viagem> {
         }
         return ResponseEntity.notFound().build();
     }
+
+
+    @GetMapping(value="/tipo/{type}", produces="application/json")
+    @Operation(summary = "Retorna lista de viagens com mesmo tipo", description = "Retorna as viagens com o tipo correspondente ao indicado")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200",
+            description = "Retorna as viagens com tipo indicado"),
+        @ApiResponse(responseCode = "404",
+            description = "Viagens não encontradas"),
+    })
+    public ResponseEntity<List<Viagem>> getByType(@PathVariable ("type") Type type) {
+        List<Viagem> trips = _viagemService.findByType(type);
+        if(trips != null && !trips.isEmpty()){
+            return ResponseEntity.ok(trips);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
     @Override
     @PutMapping("/")

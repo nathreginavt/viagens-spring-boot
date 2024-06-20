@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.fatecrl.viagens.model.Type;
 import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.repository.ViagemRepository;
 
@@ -49,7 +50,23 @@ public class ViagemService implements IService<Viagem> {
     }
 
     public List<Viagem> findBySource(String source) {
-        return repository.findBySource(source);
+        List<Viagem> viagens = repository.findBySource(source);
+
+        if(viagens.size() > 0) {
+            return viagens;
+        }
+
+        return null;
+    }
+
+    public List<Viagem> findByType(Type type) {
+        List<Viagem> viagens = repository.findByType(type);
+
+        if(viagens.size() > 0) {
+            return viagens;
+        }
+
+        return null;
     }
 
     public boolean update(Viagem trip) {
