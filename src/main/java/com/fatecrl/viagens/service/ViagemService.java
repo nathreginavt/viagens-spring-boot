@@ -11,55 +11,59 @@ import org.springframework.stereotype.Service;
 import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.repository.ViagemRepository;
 
+import lombok.val;
+
 @Service
-public class ViagemService implements IService<Viagem>{
+public class ViagemService implements IService<Viagem> {
 
     @Autowired
     private ViagemRepository repository;
 
-    public ViagemService(){  }
+    public ViagemService() {
+    }
 
-    @Override
     public Viagem create(Viagem trip) {
         repository.save(trip);
         return trip;
     }
 
-    @Override
     public Viagem findById(Long id) {
         Optional<Viagem> trip = repository.findById(id);
         return trip.orElse(null);
     }
 
-    @Override
-    public List<Viagem> findAll(){
+    public List<Viagem> findAll() {
         return repository.findAll();
     }
 
-    public Page<Viagem> findAll(Pageable pageable){
+    public Page<Viagem> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    //queries
     public List<Viagem> findByDestination(String destination) {
-        return repository.findByDestination(destination);
+        List<Viagem> viagens = repository.findByDestination(destination);
+
+        if (viagens.size() > 0) {
+            return viagens;
+        }
+
+        return null;
     }
+
     public List<Viagem> findBySource(String source) {
         return repository.findBySource(source);
     }
 
-    @Override
     public boolean update(Viagem trip) {
-        if(repository.existsById(trip.getId())){
+        if (repository.existsById(trip.getId())) {
             repository.save(trip);
             return true;
         }
         return false;
     }
 
-    @Override
     public boolean delete(Long id) {
-        if(repository.existsById(id)){
+        if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
         }

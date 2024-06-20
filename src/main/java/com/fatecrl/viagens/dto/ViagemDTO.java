@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 
 public class ViagemDTO {
-
+    
     private String orderNumber;
 
     private String amount;

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fatecrl.viagens.dto.ViagemDTO;
+import com.fatecrl.viagens.mapper.ViagemMapper;
 import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.service.ViagemService;
 
@@ -36,6 +38,9 @@ public class ViagemController implements IController<Viagem> {
     @Autowired
     private ViagemService _viagemService;
 
+    @Autowired
+    private ViagemMapper _mapper;
+
     @Override
     @PostMapping("/")
     @Operation(summary = "Cria uma viagem", description = "Cria uma nova viagem com as informações informadas no body")
@@ -49,7 +54,7 @@ public class ViagemController implements IController<Viagem> {
         @ApiResponse(responseCode = "500"
                     , description = "Erro no servidor"),
     })
-    public ResponseEntity<Viagem> post(@Valid @RequestBody Viagem trip) {
+    public ResponseEntity<Viagem> post(@Valid @RequestBody ViagemDTO trip) {
 
         if(
             trip.getEndDateTime().isBefore(trip.getStartDateTime()) ||
@@ -59,7 +64,9 @@ public class ViagemController implements IController<Viagem> {
             return ResponseEntity.unprocessableEntity().build();
         }
 
-        Viagem newTrip = _viagemService.create(trip);
+        Viagem viagemEntity = _mapper.toEntity(trip);
+
+        Viagem newTrip = _viagemService.create(viagemEntity);
 
         URI location = ServletUriComponentsBuilder
                         .fromCurrentRequest()
