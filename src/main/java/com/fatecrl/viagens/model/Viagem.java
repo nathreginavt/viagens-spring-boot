@@ -9,8 +9,6 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
-
 @Entity
 @Table(name = "tb_viagem")
 
@@ -23,8 +21,6 @@ import java.time.LocalDateTime;
 @Setter
 
 public class Viagem implements Serializable {
-
-    private static Long nextId = 1L;
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

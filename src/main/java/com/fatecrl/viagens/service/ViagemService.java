@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import com.fatecrl.viagens.model.Viagem;
 import com.fatecrl.viagens.repository.ViagemRepository;
 
-import lombok.val;
-
 @Service
 public class ViagemService implements IService<Viagem> {
 
